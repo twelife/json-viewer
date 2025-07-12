@@ -1,3 +1,14 @@
+# 0.19.0 - 2025-07-12
+
+* **BREAKING CHANGE**: Migrated the extension to Chrome's Manifest V3.
+* **BREAKING CHANGE**: Upgraded the entire build system from Webpack 1 to Webpack 5, ensuring compatibility with modern Node.js versions (v14+).
+* Updated all dependencies to their latest compatible versions, including replacing `node-sass` with `sass`.
+* Refactored storage from `localStorage` to the asynchronous `chrome.storage.local` API to comply with Service Worker requirements.
+* Modernized background scripts to function as a Service Worker.
+* Replaced deprecated Chrome APIs (`chrome.extension.getURL`) with their modern equivalents (`chrome.runtime.getURL`).
+* Refactored content scripts to use message passing for privileged operations like script injection, complying with V3's stricter security policies.
+* Fixed Content Security Policy (CSP) violations by removing `eval()` usage from Webpack's development configuration and refactoring inline script execution.
+
 # 0.18.1 - 2020-12-22
 
 * Update viewer-custom.scss #267 (fix blank space)

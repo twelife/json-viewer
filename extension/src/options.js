@@ -34,28 +34,35 @@ function renderVersion() {
   versionLink.href = "https://github.com/tulios/json-viewer/tree/" + version;
 }
 
-function onLoaded() {
-  var currentOptions = Storage.load();
+async function onLoaded() {
+  try {
+    const currentOptions = await Storage.load();
 
-  renderVersion();
-  renderThemeList(CodeMirror, currentOptions.theme);
-  var addonsEditor = renderAddons(CodeMirror, currentOptions.addons);
-  var structureEditor = renderStructure(CodeMirror, currentOptions.structure);
-  var styleEditor = renderStyle(CodeMirror, currentOptions.style);
+    renderVersion();
+    renderThemeList(CodeMirror, currentOptions.theme);
+    const addonsEditor = renderAddons(CodeMirror, currentOptions.addons);
+    const structureEditor = renderStructure(CodeMirror, currentOptions.structure);
+    const styleEditor = renderStyle(CodeMirror, currentOptions.style);
 
-  bindResetButton();
-  bindSaveButton([addonsEditor, structureEditor, styleEditor], function(options) {
-    if (!isValidJSON(options.addons)) {
-      sweetAlert("Ops!", "\"Add-ons\" isn't a valid JSON", "error");
-
-    } else if (!isValidJSON(options.structure)) {
-      sweetAlert("Ops!", "\"Structure\" isn't a valid JSON", "error");
-
-    } else {
-      Storage.save(options);
-      sweetAlert("Success", "Options saved!", "success");
-    }
-  });
+    bindResetButton();
+    bindSaveButton([addonsEditor, structureEditor, styleEditor], (options) => {
+      if (!isValidJSON(options.addons)) {
+         sweetAlert("Ops!", "\"Add-ons\" isn't a valid JSON", "error");
+      } else if (!isValidJSON(options.structure)) {
+        sweetAlert("Ops!", "\"Structure\" isn't a valid JSON", "error");
+      } else {
+        Storage.save(options).then(() => {
+          sweetAlert("Success", "Options saved!", "success");
+        }).catch((err) => {
+          console.error("Error saving options:", err);
+          sweetAlert("Error", "Could not save options. Please check the console.", "error");
+        });
+      }
+    });
+  } catch (err) {
+    console.error("Error loading options:", err);
+    sweetAlert("Error", "Could not load options. Please check the console.", "error");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", onLoaded, false);
